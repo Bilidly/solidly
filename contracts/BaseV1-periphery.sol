@@ -17,6 +17,7 @@ interface IBaseV1Pair {
     function burn(address to) external returns (uint amount0, uint amount1);
     function mint(address to) external returns (uint liquidity);
     function getReserves() external view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast);
+    function getTradeDiff(uint amountIn, address tokenIn) external view returns (uint rateA, uint rateB);
     function getAmountOut(uint, address) external view returns (uint);
 }
 
@@ -111,6 +112,10 @@ contract BaseV1Router01 {
         (address token0,) = sortTokens(tokenA, tokenB);
         (uint reserve0, uint reserve1,) = IBaseV1Pair(pairFor(tokenA, tokenB, stable)).getReserves();
         (reserveA, reserveB) = tokenA == token0 ? (reserve0, reserve1) : (reserve1, reserve0);
+    }
+
+    function getTradeDiff(uint amountIn, address tokenIn, address tokenOut, bool stable) external view returns (uint rateA, uint rateB) {
+        (rateA, rateB) = IBaseV1Pair(pairFor(tokenIn, tokenOut, stable)).getTradeDiff(amountIn, tokenIn);
     }
 
     // performs chained getAmountOut calculations on any number of pairs

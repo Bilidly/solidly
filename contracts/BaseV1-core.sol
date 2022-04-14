@@ -255,6 +255,12 @@ contract BaseV1Pair {
         _blockTimestampLast = blockTimestampLast;
     }
 
+    function getTradeDiff(uint amountIn, address tokenIn) external view returns (uint rateA, uint rateB) {
+        uint base = tokenIn == token0 ? reserve0*decimals1/reserve1 : reserve1*decimals0/reserve0;
+        rateA = _getAmountOut(base, tokenIn, reserve0, reserve1) * 1e18 / base;
+        rateB = _getAmountOut(amountIn, tokenIn, reserve0, reserve1) * 1e18 / amountIn;
+    }
+
     // update reserves and, on the first call per block, price accumulators
     function _update(uint balance0, uint balance1, uint _reserve0, uint _reserve1) internal {
         uint blockTimestamp = block.timestamp;
